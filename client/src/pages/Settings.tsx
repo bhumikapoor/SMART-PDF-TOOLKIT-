@@ -1,9 +1,8 @@
-import { Trash2, Sun, Moon, Monitor, RotateCcw, KeyRound } from 'lucide-react';
+import { Trash2, Sun, Moon, RotateCcw } from 'lucide-react';
 import { useToast } from '../hooks/useToast';
 import { useTheme } from '../lib/theme';
 import { useSettings } from '../lib/settings';
 import { OCR_LANGUAGES, PAGE_SIZES_MM, type PageSizeId, type CompressionLevel } from '../lib/constants';
-import { Badge } from '../components/ui/Badge';
 import { cn } from '../lib/cn';
 
 export default function Settings() {
@@ -51,14 +50,11 @@ export default function Settings() {
 
       {/* Appearance */}
       <section className="card">
-        <div className="flex items-center justify-between">
+        <div>
           <div>
             <h2 className="font-semibold">Appearance</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">Choose how the app looks.</p>
           </div>
-          <Badge variant="muted">
-            <Monitor size={11} /> Theme
-          </Badge>
         </div>
         <div className="mt-4 flex gap-2">
           {themeOptions.map((opt) => {
@@ -244,16 +240,13 @@ export default function Settings() {
 
       {/* AI provider */}
       <section className="card space-y-4">
-        <div className="flex items-center justify-between gap-3">
+        <div>
           <div>
             <h2 className="font-semibold">Optional AI provider</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               Used by PDF Intelligence tools only when you choose provider mode.
             </p>
           </div>
-          <Badge variant="hybrid">
-            <KeyRound size={11} /> Optional
-          </Badge>
         </div>
         <div className="grid sm:grid-cols-2 gap-3">
           <label className="block sm:col-span-2">

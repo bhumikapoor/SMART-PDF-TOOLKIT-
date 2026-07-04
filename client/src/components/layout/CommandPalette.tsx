@@ -4,7 +4,6 @@ import { ArrowRight, Command, FileClock, Search } from 'lucide-react';
 import { TOOLS } from '../../lib/tools';
 import { readRecentFiles, subscribeRecentFiles, type RecentFile } from '../../lib/recentFiles';
 import { humanSize } from '../../lib/fileUtils';
-import { Badge } from '../ui/Badge';
 import { EmptyState } from '../shared/EmptyState';
 import { cn } from '../../lib/cn';
 
@@ -132,7 +131,6 @@ export function CommandPalette({ open, onClose }: Props) {
                           <span className="block truncate text-sm font-semibold">{tool.name}</span>
                           <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{tool.description}</span>
                         </span>
-                        <Badge variant={tool.runtime}>{tool.runtime}</Badge>
                         <ArrowRight size={15} className="text-slate-400" />
                       </button>
                     </li>

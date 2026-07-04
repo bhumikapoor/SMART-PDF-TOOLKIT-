@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Hammer, Sparkles } from 'lucide-react';
 import { Tool } from '../lib/tools';
-import { Badge } from './ui/Badge';
 
 const RUNTIME_NOTE: Record<Tool['runtime'], string> = {
   browser: 'This tool will run entirely in your browser.',
@@ -48,9 +47,6 @@ export function ToolPlaceholder({ tool }: Props) {
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
                 {tool.name}
               </h1>
-              <Badge variant={tool.status === 'beta' ? 'beta' : 'coming-soon'}>
-                {tool.status === 'beta' ? 'Beta' : 'Coming soon'}
-              </Badge>
             </div>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{tool.description}</p>
           </div>

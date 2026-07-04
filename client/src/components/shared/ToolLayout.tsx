@@ -3,7 +3,6 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '../../lib/cn';
-import { Badge } from '../ui/Badge';
 import type { Runtime, Status } from '../../lib/tools';
 
 interface Props {
@@ -33,23 +32,10 @@ interface Props {
   className?: string;
 }
 
-const RUNTIME_LABEL: Record<Runtime, string> = {
-  browser: 'Browser',
-  backend: 'Backend',
-  hybrid: 'Hybrid',
-};
-const STATUS_LABEL: Record<Status, string> = {
-  ready: 'Ready',
-  beta: 'Beta',
-  'coming-soon': 'Coming soon',
-};
-
 export function ToolLayout({
   title,
   description,
   icon: Icon,
-  runtime,
-  status,
   headerExtra,
   upload,
   options,
@@ -80,12 +66,6 @@ export function ToolLayout({
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
               {title}
             </h1>
-            {runtime && <Badge variant={runtime}>{RUNTIME_LABEL[runtime]}</Badge>}
-            {status && (
-              <Badge variant={status === 'ready' ? 'ready' : status === 'beta' ? 'beta' : 'coming-soon'}>
-                {STATUS_LABEL[status]}
-              </Badge>
-            )}
           </div>
           {description && (
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 max-w-3xl">{description}</p>

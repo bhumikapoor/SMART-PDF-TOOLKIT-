@@ -1,14 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { Tool } from '../../lib/tools';
-import { Badge } from '../ui/Badge';
 import { cn } from '../../lib/cn';
-
-const RUNTIME_LABEL: Record<Tool['runtime'], string> = {
-  browser: 'Browser',
-  backend: 'Backend',
-  hybrid: 'Hybrid',
-};
 
 const ACCENT: Record<Tool['category'], string> = {
   dashboard: 'bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200',
@@ -25,7 +18,6 @@ const ACCENT: Record<Tool['category'], string> = {
 
 export function ToolCard({ tool }: { tool: Tool }) {
   const Icon = tool.icon;
-  const ready = tool.status === 'ready';
   return (
     <Link
       to={tool.route}
@@ -55,12 +47,6 @@ export function ToolCard({ tool }: { tool: Tool }) {
           <p className="mt-3 max-w-[18rem] text-[15px] leading-6 text-slate-600 dark:text-slate-400">
             {tool.description}
           </p>
-          <div className="mt-6 flex flex-wrap items-center gap-1.5">
-            <Badge variant={tool.runtime}>{RUNTIME_LABEL[tool.runtime]}</Badge>
-            <Badge variant={ready ? 'ready' : tool.status === 'beta' ? 'beta' : 'coming-soon'}>
-              {ready ? 'Ready' : tool.status === 'beta' ? 'Beta' : 'Soon'}
-            </Badge>
-          </div>
         </div>
       </div>
     </Link>
