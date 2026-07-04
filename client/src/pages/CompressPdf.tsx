@@ -11,15 +11,23 @@ import type { AcceptedFile, ProcessingState, ToolResult } from '../components/sh
 import { CompressPreset, compressPdf } from '../lib/pdfCompress';
 import { applyNamePattern, humanSize } from '../lib/fileUtils';
 import { useSettings } from '../lib/settings';
+import { useCapabilities } from '../lib/capabilities';
+import { postBackendPdf } from '../lib/backendPdf';
 import { findTool } from '../lib/tools';
 import { cn } from '../lib/cn';
 import { getQualityPreset, QUALITY_PRESETS, type OutputQualityPreset } from '../lib/qualityPresets';
 
+type EngineMode = 'backend' | 'browser';
+type GsPreset = 'screen' | 'ebook' | 'printer' | 'prepress';
+
 export default function CompressPdf() {
   const tool = findTool('compress-pdf')!;
   const { settings } = useSettings();
+  const caps = useCapabilities();
   const [files, setFiles] = useState<AcceptedFile[]>([]);
   const file = files[0] ?? null;
+  const [engine, setEngine] = useState<EngineMode>('browser');
+  const [gsPreset, setGsPreset] = useState<GsPreset>('ebook');
   const [qualityPreset, setQualityPreset] = useState<OutputQualityPreset>('balanced');
   const [lossless, setLossless] = useState(false);
   const [customDpi, setCustomDpi] = useState(150);
@@ -34,6 +42,12 @@ export default function CompressPdf() {
   useEffect(() => {
     return () => abortRef.current?.abort();
   }, []);
+
+  const gsAvailable = caps.status === 'ready' && caps.caps.ghostscript.available;
+
+  useEffect(() => {
+    if (gsAvailable) setEngine('backend');
+  }, [gsAvailable]);
 
   const originalSize = file?.file.size ?? 0;
   const outSize = result?.kind === 'single' ? result.blob.size : 0;
@@ -55,32 +69,44 @@ export default function CompressPdf() {
     setError(undefined);
     setResult(null);
     setProgress(0);
-    setMessage(lossless ? 'Re-saving PDF...' : 'Compressing pages...');
+    setMessage(engine === 'backend' ? 'Compressing PDF...' : lossless ? 'Re-saving PDF...' : 'Compressing pages...');
 
     try {
-      const mappedPreset: CompressPreset =
-        qualityPreset === 'maximum'
-          ? 'low'
-          : qualityPreset === 'balanced'
-            ? 'medium'
-            : qualityPreset === 'small'
-              ? 'high'
-              : 'custom';
-      const selected = getQualityPreset(qualityPreset);
-      const blob = await compressPdf(
-        file.file,
-        {
-          preset: mappedPreset,
-          lossless,
-          customDpi: qualityPreset === 'custom' ? customDpi : selected.dpi,
-          customQuality: qualityPreset === 'custom' ? customQuality : selected.jpegQuality,
-        },
-        (info) => {
-          setProgress(info.pct);
-          if (info.message) setMessage(info.message);
-        },
-        abortRef.current.signal,
-      );
+      let blob: Blob;
+      if (engine === 'backend') {
+        blob = await postBackendPdf('/api/backend/pdf/compress', file.file, {
+          signal: abortRef.current.signal,
+          fields: { preset: gsPreset },
+          onUploadProgress: (pct) => {
+            setProgress(Math.min(95, pct));
+            if (pct >= 100) setMessage('Compressing PDF...');
+          },
+        });
+      } else {
+        const mappedPreset: CompressPreset =
+          qualityPreset === 'maximum'
+            ? 'low'
+            : qualityPreset === 'balanced'
+              ? 'medium'
+              : qualityPreset === 'small'
+                ? 'high'
+                : 'custom';
+        const selected = getQualityPreset(qualityPreset);
+        blob = await compressPdf(
+          file.file,
+          {
+            preset: mappedPreset,
+            lossless,
+            customDpi: qualityPreset === 'custom' ? customDpi : selected.dpi,
+            customQuality: qualityPreset === 'custom' ? customQuality : selected.jpegQuality,
+          },
+          (info) => {
+            setProgress(info.pct);
+            if (info.message) setMessage(info.message);
+          },
+          abortRef.current.signal,
+        );
+      }
       const name = applyNamePattern(settings.outputNamePattern, {
         name: file.file.name.replace(/\.pdf$/i, ''),
         tool: 'compressed',
@@ -171,6 +197,56 @@ export default function CompressPdf() {
       options={
         <section className="card space-y-5">
           <div>
+            <h3 className="text-base font-semibold">Engine</h3>
+            <div className="mt-3 grid grid-cols-1 gap-2">
+              <button
+                type="button"
+                onClick={() => setEngine('backend')}
+                disabled={!gsAvailable}
+                className={cn(
+                  'rounded-xl border px-4 py-3 text-left text-sm font-semibold transition',
+                  engine === 'backend'
+                    ? 'border-red-400 bg-red-50/80 text-red-700 shadow-[0_14px_28px_-22px_rgba(239,68,68,0.8)] dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-200'
+                    : 'border-slate-200 bg-white/70 text-slate-800 hover:border-red-300 hover:bg-red-50/40 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-100 dark:hover:border-red-500/40',
+                  !gsAvailable && 'cursor-not-allowed opacity-45',
+                )}
+              >
+                Ghostscript backend
+              </button>
+              <button
+                type="button"
+                onClick={() => setEngine('browser')}
+                className={cn(
+                  'rounded-xl border px-4 py-3 text-left text-sm font-semibold transition',
+                  engine === 'browser'
+                    ? 'border-red-400 bg-red-50/80 text-red-700 shadow-[0_14px_28px_-22px_rgba(239,68,68,0.8)] dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-200'
+                    : 'border-slate-200 bg-white/70 text-slate-800 hover:border-red-300 hover:bg-red-50/40 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-100 dark:hover:border-red-500/40',
+                )}
+              >
+                Browser-only mode
+              </button>
+            </div>
+          </div>
+
+          {engine === 'backend' && (
+            <div className="border-t border-slate-200 pt-4 dark:border-white/10">
+              <h3 className="text-base font-semibold">Ghostscript preset</h3>
+              <select
+                className="input mt-3 w-full"
+                value={gsPreset}
+                onChange={(e) => setGsPreset(e.target.value as GsPreset)}
+              >
+                <option value="screen">Screen</option>
+                <option value="ebook">Ebook</option>
+                <option value="printer">Printer</option>
+                <option value="prepress">Prepress</option>
+              </select>
+            </div>
+          )}
+
+          {engine === 'browser' && (
+            <>
+          <div>
             <h3 className="text-base font-semibold">Output quality</h3>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Pick a balance between visual fidelity and file size.
@@ -240,6 +316,8 @@ export default function CompressPdf() {
               </span>
             </span>
           </label>
+            </>
+          )}
         </section>
       }
       action={
@@ -250,8 +328,8 @@ export default function CompressPdf() {
           message={message}
           error={error}
           onAction={run}
-          actionLabel="Compress PDF"
-          actionDisabled={!file}
+          actionLabel={engine === 'backend' ? 'Compress with Ghostscript' : 'Compress PDF'}
+          actionDisabled={!file || (engine === 'backend' && !gsAvailable)}
           onCancel={() => abortRef.current?.abort()}
           onReset={reset}
         />
