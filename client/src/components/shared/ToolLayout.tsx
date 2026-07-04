@@ -25,7 +25,7 @@ interface Props {
   result?: ReactNode;
   /** Fallback when none of the structured slots are passed. */
   children?: ReactNode;
-  /** "stack" lays everything full-width; "split" puts preview left, options right. */
+  /** "stack" lays everything full-width; "split" puts upload/preview left and actions right. */
   layout?: 'stack' | 'split';
   /** Back-link target. Defaults to "/". */
   backTo?: string;
@@ -50,7 +50,7 @@ export function ToolLayout({
   const useStructured = upload !== undefined || options !== undefined || preview !== undefined || action !== undefined || result !== undefined;
 
   return (
-    <div className={cn('max-w-7xl mx-auto', className)}>
+    <div className={cn('max-w-[1800px] mx-auto', className)}>
       <Link to={backTo} className="btn-ghost text-xs mb-3 inline-flex">
         <ArrowLeft size={14} /> Back
       </Link>
@@ -78,27 +78,27 @@ export function ToolLayout({
 
       {useStructured && (
         <>
-          {upload && <div className="mb-6">{upload}</div>}
-
-          {layout === 'split' && (preview || options) ? (
-            <div className="grid lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-8 space-y-6">
+          {layout === 'split' ? (
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)] 2xl:grid-cols-[minmax(0,1fr)_440px]">
+              <div className="min-w-0 space-y-6">
+                {upload}
                 {preview}
+                {result}
               </div>
-              <div className="lg:col-span-4 space-y-6">
+              <aside className="min-w-0 space-y-5 lg:sticky lg:top-6">
                 {options}
                 {action}
-              </div>
+              </aside>
             </div>
           ) : (
             <div className="space-y-6">
+              {upload}
               {preview}
               {options}
               {action}
+              {result}
             </div>
           )}
-
-          {result && <div className="mt-6">{result}</div>}
         </>
       )}
     </div>

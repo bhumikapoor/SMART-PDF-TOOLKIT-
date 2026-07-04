@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Loader2, Play, X, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
+import { CircleArrowRight, Loader2, X, RotateCcw, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { ProgressBar } from './ProgressBar';
 import { ProcessingState, AcceptedFile } from './types';
@@ -95,20 +95,31 @@ export function ProcessingPanel({
   }, [actionDisabled, onAction, state]);
 
   return (
-    <section className={cn('card space-y-4', className)}>
+    <section
+      className={cn(
+        'relative overflow-hidden rounded-lg border border-slate-200/80 bg-white/[0.92] p-5 shadow-[0_22px_70px_-42px_rgba(15,23,42,0.55)] backdrop-blur-xl',
+        'dark:border-white/10 dark:bg-white/[0.055] dark:shadow-soft-dark',
+        'space-y-5',
+        className,
+      )}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-red-500/10 to-transparent"
+      />
       {files && files.length > 0 && (
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-          <span>
-            {files.length} {files.length === 1 ? 'file' : 'files'} selected
+        <div className="relative flex items-center justify-between rounded-lg border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-xs text-slate-600 dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300">
+          <span className="font-medium">
+            {files.length} {files.length === 1 ? 'file' : 'files'}
           </span>
           <span>{humanSize(totalSize)}</span>
         </div>
       )}
 
-      {children && <div className="space-y-3">{children}</div>}
+      {children && <div className="relative space-y-3">{children}</div>}
 
       {state === 'processing' && (
-        <div className="space-y-2 animate-fade-in">
+        <div className="relative space-y-3 animate-fade-in">
           <ProgressBar
             value={progress}
             indeterminate={indeterminate}
@@ -125,7 +136,7 @@ export function ProcessingPanel({
       )}
 
       {state === 'error' && (
-        <div className="flex items-start gap-2 rounded-xl border border-red-300/60 bg-red-50/80 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 p-3 text-sm animate-fade-in">
+        <div className="relative flex items-start gap-2 rounded-xl border border-red-300/60 bg-red-50/90 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 p-3 text-sm animate-fade-in">
           <XCircle size={16} className="mt-0.5 shrink-0" />
           <div className="min-w-0">
             <div className="font-semibold">Something went wrong</div>
@@ -135,7 +146,7 @@ export function ProcessingPanel({
       )}
 
       {state === 'success' && (
-        <div className="flex items-start gap-2 rounded-xl border border-emerald-300/60 bg-emerald-50/80 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 p-3 text-sm animate-fade-in">
+        <div className="relative flex items-start gap-2 rounded-xl border border-emerald-300/60 bg-emerald-50/90 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 p-3 text-sm animate-fade-in">
           <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
           <div className="min-w-0">
             <div className="font-semibold">Done</div>
@@ -144,24 +155,34 @@ export function ProcessingPanel({
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="relative flex flex-col gap-2">
         {onAction && state !== 'processing' && state !== 'success' && (
           <button
             type="button"
-            className="btn-primary"
+            className={cn(
+              'inline-flex w-full items-center justify-center gap-3 rounded-2xl px-5 py-4 text-base font-bold text-white shadow-[0_18px_34px_-18px_rgba(239,68,68,0.85)] transition sm:text-lg',
+              'bg-[#ef312f] hover:bg-[#e52625] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+              'dark:focus-visible:ring-offset-slate-950',
+              'disabled:cursor-not-allowed disabled:bg-red-300 disabled:text-white/80 disabled:shadow-none',
+            )}
             onClick={handleAction}
             disabled={actionDisabled}
           >
-            <Play size={14} /> {actionLabel}
+            <span>{actionLabel}</span>
+            <CircleArrowRight size={24} strokeWidth={2.4} />
           </button>
         )}
         {state === 'processing' && (
-          <button type="button" className="btn-primary" disabled>
+          <button
+            type="button"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-[#ef312f] px-5 py-4 text-base font-bold text-white opacity-80 sm:text-lg"
+            disabled
+          >
             <Loader2 size={14} className="animate-spin" /> Working…
           </button>
         )}
         {(state === 'success' || state === 'error') && onReset && (
-          <button type="button" className="btn-secondary" onClick={onReset}>
+          <button type="button" className="btn-secondary justify-center" onClick={onReset}>
             <RotateCcw size={14} /> Start over
           </button>
         )}
