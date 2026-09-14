@@ -171,7 +171,10 @@ export function TopBar() {
 
   return (
     <>
-      <header ref={wrapRef} className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/[0.76] backdrop-blur-2xl dark:border-white/10 dark:bg-[#111114]/[0.78]">
+      <header
+        ref={wrapRef}
+        className="sticky top-3 z-50 mx-3 rounded-2xl border border-slate-200/80 bg-white/[0.88] shadow-[0_18px_50px_-30px_rgba(15,23,42,0.48)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#111114]/[0.86] dark:shadow-[0_18px_50px_-30px_rgba(0,0,0,0.9)] sm:mx-6 xl:mx-auto xl:max-w-[1500px]"
+      >
         <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-4 px-4 sm:px-6">
           <Link to="/" onClick={closeMenus} className="flex shrink-0 items-center gap-2">
             <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#0b1f4a] text-white shadow-[0_10px_30px_-14px_rgba(11,31,74,0.9)]">
