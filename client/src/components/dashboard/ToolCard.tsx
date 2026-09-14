@@ -22,29 +22,28 @@ export function ToolCard({ tool }: { tool: Tool }) {
     <Link
       to={tool.route}
       className={cn(
-        'group relative block min-h-[260px] overflow-hidden rounded-lg p-8 transition',
-        'border border-slate-200 bg-white/[0.82] shadow-soft backdrop-blur-xl',
-        'dark:border-white/10 dark:bg-white/[0.045] dark:shadow-soft-dark',
-        'hover:-translate-y-1 hover:border-slate-300 hover:bg-white hover:shadow-[0_22px_60px_-34px_rgba(15,23,42,0.7)]',
-        'dark:hover:border-white/20 dark:hover:bg-white/[0.07]',
+        'group relative block min-h-[224px] overflow-hidden rounded-2xl p-6 transition duration-300',
+        'border border-slate-200/80 bg-white/90 shadow-[0_12px_34px_-28px_rgba(15,23,42,0.52)] backdrop-blur-xl',
+        'dark:border-white/10 dark:bg-white/[0.055] dark:shadow-soft-dark',
+        'hover:-translate-y-1 hover:border-blue-200 hover:bg-white hover:shadow-[0_20px_45px_-28px_rgba(15,23,42,0.55)]',
+        'dark:hover:border-blue-300/30 dark:hover:bg-white/[0.08]',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60',
       )}
     >
+      <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-blue-200/80 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:via-blue-300/50" />
       <div className="flex h-full flex-col">
-        <span
-          className={cn(
-            'grid h-10 w-10 place-items-center rounded-md transition group-hover:scale-105',
-            ACCENT[tool.category],
-          )}
-        >
-          <Icon size={21} />
-        </span>
-        <div className="mt-8 min-w-0">
+        <div className="flex items-start justify-between gap-4">
+          <span className={cn('grid h-11 w-11 place-items-center rounded-xl transition duration-300 group-hover:scale-105', ACCENT[tool.category])}>
+            <Icon size={20} />
+          </span>
+          <ArrowUpRight size={17} className="mt-1 text-slate-300 transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#163a70] dark:text-slate-600 dark:group-hover:text-blue-200" />
+        </div>
+        <div className="mt-auto min-w-0 pt-8">
+          <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">{tool.category.replace('-', ' ')}</div>
           <div className="flex items-center gap-2">
-            <h3 className="truncate text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{tool.name}</h3>
-            <ArrowUpRight size={17} className="text-slate-400 opacity-0 transition group-hover:opacity-100" />
+            <h3 className="truncate text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{tool.name}</h3>
           </div>
-          <p className="mt-3 max-w-[18rem] text-[15px] leading-6 text-slate-600 dark:text-slate-400">
+          <p className="mt-2 max-w-[18rem] text-sm leading-6 text-slate-500 dark:text-slate-400">
             {tool.description}
           </p>
         </div>

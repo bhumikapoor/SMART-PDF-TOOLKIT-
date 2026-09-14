@@ -1,5 +1,5 @@
 import { type CSSProperties, useEffect, useMemo, useState } from 'react';
-import { Clock, Search, Sparkles } from 'lucide-react';
+import { ArrowRight, Clock, Search, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ToolCard } from '../components/dashboard/ToolCard';
 import { TOOLS, type CategoryId } from '../lib/tools';
@@ -8,6 +8,7 @@ import { humanSize } from '../lib/fileUtils';
 import { EmptyState } from '../components/shared';
 import { cn } from '../lib/cn';
 import { WobbleCard } from '../components/ui/WobbleCard';
+import { ImagesSlider } from '../components/ui/ImagesSlider';
 
 type FilterId = 'all' | 'workflows' | CategoryId;
 
@@ -35,6 +36,12 @@ const WORKFLOW_IDS = [
   'protect-pdf',
   'ocr-pdf',
   'ai-summarize',
+];
+
+const FEATURE_IMAGES = [
+  'https://images.unsplash.com/photo-1485433592409-9018e83a1f0d?q=80&w=1814&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1483982258113-b72862e6cff6?q=80&w=1814&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1482189349482-3defd547e0e9?q=80&w=1814&auto=format&fit=crop',
 ];
 
 export default function Dashboard() {
@@ -123,6 +130,18 @@ export default function Dashboard() {
 
           {tools.length ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {active === 'all' && (
+                <ImagesSlider images={FEATURE_IMAGES} className="min-h-[224px] sm:col-span-2">
+                  <div className="flex h-full max-w-md flex-col justify-center px-6 py-8 sm:px-8">
+                    <div className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-200">Simple. Local. Private.</div>
+                    <h3 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Your everyday PDF workspace.</h3>
+                    <p className="mt-3 text-sm leading-6 text-blue-100">Start with the essentials, then keep every conversion and edit flowing in one place.</p>
+                    <Link to="/tools/merge-pdf" className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+                      Start with Merge PDF <ArrowRight size={15} />
+                    </Link>
+                  </div>
+                </ImagesSlider>
+              )}
               {tools.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} />
               ))}
