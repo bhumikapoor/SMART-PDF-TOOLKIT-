@@ -174,11 +174,11 @@ export function TopBar() {
       <header ref={wrapRef} className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/[0.76] backdrop-blur-2xl dark:border-white/10 dark:bg-[#111114]/[0.78]">
         <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-4 px-4 sm:px-6">
           <Link to="/" onClick={closeMenus} className="flex shrink-0 items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-red-500 text-white shadow-[0_10px_30px_-14px_rgba(239,68,68,0.9)]">
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#0b1f4a] text-white shadow-[0_10px_30px_-14px_rgba(11,31,74,0.9)]">
               <FileText size={18} />
             </span>
             <span className="hidden text-xl font-black tracking-tight text-slate-950 dark:text-white sm:block">
-              Ultra<span className="text-red-500">PDF</span>
+              Ultra<span className="text-[#163a70] dark:text-blue-300">PDF</span>
             </span>
           </Link>
 
