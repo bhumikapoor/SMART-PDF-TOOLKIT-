@@ -53,3 +53,29 @@ body {
 .thin-scroll::-webkit-scrollbar-thumb { background: rgba(100,116,139,0.35); border-radius: 999px; }
 .thin-scroll::-webkit-scrollbar-thumb:hover { background: rgba(100,116,139,0.55); }
 .thin-scroll { scrollbar-width: thin; }
+
+@keyframes hero-card-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes hero-content-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-10px) rotate(-2deg); }
+}
+
+.wobble-card-enter { animation: hero-card-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.wobble-card-enter [data-hero-step] {
+  animation: hero-content-in 650ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--hero-delay, 0ms);
+}
+.wobble-card-float { animation: hero-float 5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wobble-card-enter, .wobble-card-enter [data-hero-step], .wobble-card-float { animation: none; }
+}

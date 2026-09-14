@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type CSSProperties, useEffect, useMemo, useState } from 'react';
 import { Clock, Search, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ToolCard } from '../components/dashboard/ToolCard';
@@ -7,6 +7,7 @@ import { readRecentFiles, subscribeRecentFiles, type RecentFile } from '../lib/r
 import { humanSize } from '../lib/fileUtils';
 import { EmptyState } from '../components/shared';
 import { cn } from '../lib/cn';
+import { WobbleCard } from '../components/ui/WobbleCard';
 
 type FilterId = 'all' | 'workflows' | CategoryId;
 
@@ -55,38 +56,53 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-[1500px] space-y-8">
-      <section className="relative overflow-hidden rounded-2xl border border-slate-200/70 bg-white/[0.62] px-5 py-8 shadow-soft backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.045] sm:px-8">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent dark:via-white/20" />
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-slate-300">
-            <Sparkles size={14} className="text-red-500" /> Ultra PDF Toolkit
+      <WobbleCard containerClassName="wobble-card-enter min-h-[330px] border border-blue-300/30 shadow-[0_28px_80px_-36px_rgba(8,27,66,0.78)]">
+        <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(rgba(191,219,254,0.4)_1px,transparent_1px)] [background-size:18px_18px]" />
+        <div className="relative flex min-h-[330px] flex-col justify-center px-5 py-10 sm:px-10 lg:px-14">
+          <div className="max-w-3xl">
+            <div data-hero-step style={{ '--hero-delay': '100ms' } as CSSProperties} className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-blue-100 shadow-sm backdrop-blur-md">
+              <Sparkles size={14} className="text-blue-200" /> Ultra PDF Toolkit
+            </div>
+            <h1 data-hero-step style={{ '--hero-delay': '180ms' } as CSSProperties} className="max-w-2xl text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+              Hi Prabh Mannat, let's get started
+            </h1>
+            <p data-hero-step style={{ '--hero-delay': '260ms' } as CSSProperties} className="mt-4 max-w-2xl text-sm leading-6 text-blue-100 sm:text-base">
+              Pick a tool, search by operation, or open a recent file. Everything is tuned for fast local PDF work.
+            </p>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
-            Hi Prabh Mannat, let's get started
-          </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-slate-600 dark:text-slate-300 sm:text-base">
-            Pick a tool, search by operation, or open a recent file. Everything is tuned for fast local PDF work.
-          </p>
+
+          <div data-hero-step style={{ '--hero-delay': '340ms' } as CSSProperties} className="mt-8 flex max-w-4xl flex-wrap gap-2.5">
+            {FILTERS.map((filter) => (
+              <button
+                key={filter.id}
+                type="button"
+                onClick={() => setActive(filter.id)}
+                className={cn(
+                  'rounded-full border px-4 py-2 text-sm font-bold transition duration-300 sm:px-5 sm:text-base',
+                  active === filter.id
+                    ? 'border-white bg-white text-[#0b1f4a] shadow-[0_12px_28px_-14px_rgba(0,0,0,0.75)]'
+                    : 'border-white/20 bg-white/10 text-blue-50 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/20',
+                )}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-          {FILTERS.map((filter) => (
-            <button
-              key={filter.id}
-              type="button"
-              onClick={() => setActive(filter.id)}
-              className={cn(
-                'rounded-full border px-5 py-2 text-sm font-bold transition sm:text-base',
-                active === filter.id
-                  ? 'border-slate-950 bg-slate-950 text-white shadow-soft dark:border-white dark:bg-white dark:text-slate-950'
-                  : 'border-slate-200 bg-white/[0.86] text-slate-600 hover:border-slate-300 hover:bg-white dark:border-white/10 dark:bg-white/[0.055] dark:text-slate-300 dark:hover:bg-white/[0.09]',
-              )}
-            >
-              {filter.label}
-            </button>
-          ))}
+        <div aria-hidden="true" className="pointer-events-none absolute -right-6 bottom-4 hidden w-52 rounded-2xl border border-white/20 bg-white/10 p-4 shadow-2xl backdrop-blur-xl lg:block wobble-card-float">
+          <div className="mb-4 flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.18em] text-blue-100">
+            <span>Quick tools</span><span className="h-2 w-2 rounded-full bg-emerald-300" />
+          </div>
+          <div className="space-y-2">
+            {['Merge PDF', 'Compress', 'OCR Scan'].map((tool, index) => (
+              <div key={tool} className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs font-semibold text-white" style={{ transform: `translateX(${index * -7}px)` }}>
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-200" /> {tool}
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
+      </WobbleCard>
 
       <section className="grid gap-5 lg:grid-cols-[1fr_320px]">
         <div>
